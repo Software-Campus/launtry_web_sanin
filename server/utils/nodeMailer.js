@@ -1,8 +1,7 @@
 const nodemailer = require("nodemailer");
+const Otp = require("../models/otp");
+const { saveOTPData, generateOTP } = require("./otpdata");
 require("dotenv").config();
-
-
-
 
 // Create a transporter object using the default SMTP transport
 let transporter = nodemailer.createTransport({
@@ -15,13 +14,15 @@ let transporter = nodemailer.createTransport({
     },
 });
 
-exports.sendMailFunction = (email) => {
+exports.sendOTPviaEmail = async (email, userId) => {
+    const otp = generateOTP();
+    const message = `Your OTP is: ${otp}`;
+    console.log({ message });
     let mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
-        subject: "Login Message",
-        html: `<h1>Welcome to OLX</h1>
-           <h4>Thank you for signing up!</h4>`,
+        subject: "Login OTP",
+        html: message,
     };
 
     // Send email
@@ -29,13 +30,8 @@ exports.sendMailFunction = (email) => {
         if (error) {
             console.error("Error occurred:", error);
         } else {
-            console.log("Email sent successfully:".yellow, info.messageId);
+            saveOTPData(userId, otp);
+            console.log("Email sent successfully to :".yellow, info.accepted);
         }
     });
-};
-
-// Function to generate OTP
-exports.generateOTP = () => {
-    console.log("otp generated".blue);
-    return Math.floor(100000 + Math.random() * 900000).toString();
 };
