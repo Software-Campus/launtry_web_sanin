@@ -9,12 +9,12 @@ const otpSchema = new mongoose.Schema({
         required: true,
         type: String,
     },
-    expiresAt:{
+    expiresAt: {
         type: Date,
-        default: function() {
+        default: function () {
             return new Date(Date.now() + 5 * 60 * 1000); // 5 minutes in milliseconds
-        }
-    }
+        },
+    },
 });
 
 const Otp = mongoose.model("otps", otpSchema);
